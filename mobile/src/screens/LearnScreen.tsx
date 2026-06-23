@@ -421,7 +421,7 @@ export function LearnScreen({ navigation }: any) {
               <Text style={s.answerLabel}>Correct answer:</Text>
               <Text style={s.answerText}>{expected}</Text>
               {answer.trim() && (
-                <Text style={styles.wrongAnswer}>
+                <Text style={s.wrongAnswer}>
                   Your answer: <Text style={s.strikethrough}>{answer}</Text>
                 </Text>
               )}
