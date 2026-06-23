@@ -50,9 +50,26 @@ export const api = {
 
   async getProgress(token: string) {
     const res = await fetch(`${API_URL}/api/progress`, {
-      headers: { Authorization: "Bearer " + token },
+      headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error("Failed to fetch progress");
+    return res.json();
+  },
+
+  // Grammar API
+  async getGrammarRules(token: string) {
+    const res = await fetch(`${API_URL}/api/grammar/rules`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to fetch grammar rules");
+    return res.json();
+  },
+
+  async getGrammarExercise(token: string, ruleName: string) {
+    const res = await fetch(`${API_URL}/api/grammar/exercises/${ruleName}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to fetch exercise");
     return res.json();
   },
 };

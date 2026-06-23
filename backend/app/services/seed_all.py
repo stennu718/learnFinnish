@@ -17,6 +17,7 @@ from app.services.seed_health import SEED_PART5
 from app.services.seed_home_time import SEED_PART6
 from app.services.seed_people import SEED_PART7
 from app.services.seed_clothing_nature import SEED_PART8
+from app.services.seed_extra import SEED_PART9
 
 def to_wordpair(w: dict) -> WordPair:
     return WordPair(
@@ -46,7 +47,7 @@ async def seed_all():
 
         # Parts 2-8: from Python lists
         for part in [SEED_PART2, SEED_PART3, SEED_PART4, SEED_PART5,
-                     SEED_PART6, SEED_PART7, SEED_PART8]:
+                     SEED_PART6, SEED_PART7, SEED_PART8, SEED_PART9]:
             all_words.extend(part)
 
         # Deduplicate by (estonian, finnish) pair
