@@ -13,6 +13,7 @@ class Base(DeclarativeBase):
 
 
 async def get_db():
+    """Get database session with auto-commit on success."""
     async with async_session() as session:
         try:
             yield session
@@ -20,3 +21,9 @@ async def get_db():
         except Exception:
             await session.rollback()
             raise
+
+
+async def get_db_manual():
+    """Get database session with manual commit control."""
+    async with async_session() as session:
+        yield session

@@ -42,7 +42,20 @@ async def list_words(
 
     result = await db.execute(query)
     pairs = result.scalars().all()
-    return [WordPairResponse.model_validate(p.__dict__) for p in pairs]
+    return [
+        WordPairResponse(
+            id=p.id,
+            estonian=p.estonian,
+            finnish=p.finnish,
+            estonian_example=p.estonian_example,
+            finnish_example=p.finnish_example,
+            category=p.category,
+            difficulty=p.difficulty,
+            is_cognate=p.is_cognate,
+            audio_url=p.audio_url,
+        )
+        for p in pairs
+    ]
 
 
 @router.get("/categories")

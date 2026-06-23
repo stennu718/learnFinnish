@@ -41,26 +41,19 @@ export default function GrammarPage() {
   async function loadRules() {
     setLoading(true);
     try {
-      const resp = await fetch("http://localhost:8000/api/grammar/rules", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (resp.ok) setRules(await resp.json());
+      const data = await api.getGrammarRules(token!);
+      setRules(data);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   }
 
   async function loadExercise(ruleName: string) {
     try {
-      const resp = await fetch(`http://localhost:8000/api/grammar/exercises/${ruleName}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (resp.ok) {
-        const ex = await resp.json();
-        setExercise(ex);
-        setSelectedRule(rules.find(r => r.name === ruleName) || null);
-        setShowResult(false);
-        setAnswer("");
-      }
+      const ex = await api.getGrammarExercise(token!, ruleName);
+      setExercise(ex);
+      setSelectedRule(rules.find(r => r.name === ruleName) || null);
+      setShowResult(false);
+      setAnswer("");
     } catch (e) { console.error(e); }
   }
 

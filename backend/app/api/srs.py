@@ -113,6 +113,7 @@ async def submit_review(
     progress.last_activity = datetime.utcnow()
 
     await db.flush()
+    await db.commit()
 
     return ReviewResponse(
         next_review=card.next_review.isoformat(),
