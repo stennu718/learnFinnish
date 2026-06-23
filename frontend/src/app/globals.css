@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --finland-blue: #003580;
+  --estonia-blue: #0072ce;
+}
