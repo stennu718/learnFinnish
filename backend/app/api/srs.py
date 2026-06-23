@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
 
@@ -24,8 +24,8 @@ class DueCardResponse(BaseModel):
 
 
 class ReviewRequest(BaseModel):
-    card_id: int
-    quality: int  # 0-5 SM-2 quality
+    card_id: int = Field(..., gt=0)
+    quality: int = Field(..., ge=0, le=5)  # 0-5 SM-2 quality
 
 
 class ReviewResponse(BaseModel):
