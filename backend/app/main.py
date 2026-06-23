@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import auth, words, srs, progress
+from app.api import auth, words, srs, progress, grammar
 
 app = FastAPI(
     title="learnFinnish API",
@@ -25,6 +25,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(words.router, prefix="/api/words", tags=["words"])
 app.include_router(srs.router, prefix="/api/srs", tags=["srs"])
 app.include_router(progress.router, prefix="/api/progress", tags=["progress"])
+app.include_router(grammar.router, prefix="/api/grammar", tags=["grammar"])
 
 
 @app.on_event("startup")
