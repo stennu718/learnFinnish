@@ -19,6 +19,8 @@ jobs:
           python-version: "3.11"
       - run: pip install -r requirements.txt
       - run: pytest tests/ -v --tb=short
+        env:
+          DATABASE_URL: sqlite+aiosqlite:///./test.db
 
   frontend-lint:
     runs-on: ubuntu-latest

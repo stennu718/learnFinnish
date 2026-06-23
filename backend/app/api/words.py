@@ -24,6 +24,7 @@ class WordPairResponse(BaseModel):
 
 
 @router.get("/", response_model=list[WordPairResponse])
+@router.get("", response_model=list[WordPairResponse])
 async def list_words(
     category: str | None = Query(None),
     cognates_only: bool = Query(False),
@@ -41,10 +42,11 @@ async def list_words(
 
     result = await db.execute(query)
     pairs = result.scalars().all()
-    return [WordPairResponse.model_validate(p) for p in pairs]
+    return [WordPairResponse.model_validate(p.__dict__) for p in pairs]
 
 
 @router.get("/categories")
+@router.get("/categories/")
 async def list_categories(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),

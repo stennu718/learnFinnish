@@ -34,6 +34,7 @@ class UserResponse(BaseModel):
 
 
 @router.post("/register", response_model=TokenResponse)
+@router.post("/register/", response_model=TokenResponse)
 async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     # Check existing
     result = await db.execute(select(User).where(User.email == req.email))
@@ -53,6 +54,7 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
+@router.post("/login/", response_model=TokenResponse)
 async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == req.email))
     user = result.scalar_one_or_none()
@@ -67,5 +69,6 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserResponse)
+@router.get("/me/", response_model=UserResponse)
 async def me(user: User = Depends(get_current_user)):
     return UserResponse(id=user.id, email=user.email, display_name=user.display_name)

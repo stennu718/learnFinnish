@@ -37,6 +37,7 @@ class ReviewResponse(BaseModel):
 
 
 @router.get("/due", response_model=list[DueCardResponse])
+@router.get("/due/", response_model=list[DueCardResponse])
 async def get_due_cards(
     limit: int = 20,
     db: AsyncSession = Depends(get_db),
@@ -65,6 +66,7 @@ async def get_due_cards(
 
 
 @router.post("/review", response_model=ReviewResponse)
+@router.post("/review/", response_model=ReviewResponse)
 async def submit_review(
     req: ReviewRequest,
     db: AsyncSession = Depends(get_db),
@@ -122,6 +124,7 @@ async def submit_review(
 
 
 @router.post("/init")
+@router.post("/init/")
 async def init_srs_cards(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
