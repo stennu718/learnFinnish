@@ -35,6 +35,39 @@ jobs:
       - run: npm ci
       - run: npm run lint
 
+  android-apk:
+    runs-on: ubuntu-latest
+    needs: [backend-tests]
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+      - name: Login to Expo
+        run: eas login --token ${{ secrets.EXPO_TOKEN }}
+      - name: Build APK
+        run: eas build -p android --profile apk --non-interactive
+      - name: Download APK
+        run: eas build:list --platform android --limit 1
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: mobile/android/app/build/outputs/apk/release/*.apk
+
   docker-build:
     runs-on: ubuntu-latest
     needs: [backend-tests]

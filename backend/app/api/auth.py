@@ -1,5 +1,5 @@
 """Auth API routes."""
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -93,6 +93,26 @@ async def me(user: User = Depends(get_current_user)):
 
 @router.post("/logout")
 @router.post("/logout/")
-async def logout(user: User = Depends(get_current_user)):
-    """Logout — client should discard token."""
+async def logout(request: Request, user: User = Depends(get_current_user)):
+    """Logout — blacklist the token."""
+    from app.core.token_blacklist import blacklist_token
+    from datetime import datetime, timedelta
+
+    # Get token from header
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:]
+        # Decode to get expiry
+        try:
+            from jose import jwt
+            from app.core.config import settings
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+            exp = payload.get("exp")
+            if exp:
+                expires_at = datetime.utcfromtimestamp(exp)
+                jti = payload.get("jti", token[:32])
+                blacklist_token(jti, expires_at)
+        except Exception:
+            pass
+
     return {"message": "Logged out successfully"}

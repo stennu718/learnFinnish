@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import engine, Base
+from app.core.rate_limit import RateLimitMiddleware
 from app.api import auth, words, srs, progress, grammar
 
 app = FastAPI(
@@ -12,6 +13,7 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -19,6 +21,9 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "Accept"],
 )
+
+# Rate limiting middleware (60 requests per minute per IP)
+app.add_middleware(RateLimitMiddleware, requests_per_minute=60)
 
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])

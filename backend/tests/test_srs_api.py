@@ -1,47 +1,18 @@
 """SRS API põhjalikud integratsioonitestid — 50+ testi."""
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
-from app.main import app
-from app.core.database import engine, Base, async_session
 
 
-@pytest_asyncio.fixture(scope="session")
-async def setup_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    async with async_session() as db:
-        from app.services.seed import seed_database
-        await seed_database(db)
-        await db.commit()
-    yield
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
 
 
-@pytest_asyncio.fixture
-async def client(setup_db):
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test", follow_redirects=True) as ac:
-        yield ac
 
 
-def unique_email():
-    import uuid
-    return f"user_{uuid.uuid4().hex[:8]}@test.ee"
 
 
-@pytest_asyncio.fixture
-async def auth_headers(client: AsyncClient):
-    email = unique_email()
-    await client.post("/api/auth/register", json={
-        "email": email, "password": "validpass123"
-    })
-    resp = await client.post("/api/auth/login", json={
-        "email": email, "password": "validpass123"
-    })
-    token = resp.json()["access_token"]
-    return {"Authorization": f"Bearer {token}"}
+
+
+
+
 
 
 class TestSRSCardCreation:

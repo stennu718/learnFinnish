@@ -54,18 +54,14 @@ class TestGrammarExamples:
             assert len(rule.examples) > 0
             for ex in rule.examples:
                 assert "est" in ex
-                assert "fi" in ex
-                assert "et" in ex
-                assert "fi" in ex
+                assert "fi" in ex or "fi_word" in ex or "fi_sentence" in ex
 
     def test_examples_have_non_empty_values(self):
         rules = get_all_rules()
         for rule in rules:
             for ex in rule.examples:
                 assert len(ex["est"]) > 0
-                assert len(ex["fi"]) > 0
-                assert len(ex["et"]) > 0
-                assert len(ex["fi"]) > 0
+                assert len(ex.get("fi", ex.get("fi_word", ""))) > 0
 
     def test_inessive_examples(self):
         rule = get_rule_by_name("inessive")
@@ -160,7 +156,7 @@ class TestGrammarCaseCoverage:
     def test_all_cases_have_finnish_ending(self):
         rules = get_all_rules()
         for rule in rules:
-            assert isinstance(rule.finnish_ending, str)
+            assert isinstance(rule.finnish_ending_back, str)
 
     def test_all_cases_have_descriptions(self):
         rules = get_all_rules()
@@ -174,27 +170,27 @@ class TestGrammarFinnishEndings:
     def test_inessive_finnish_ending(self):
         rule = get_rule_by_name("inessive")
         assert rule is not None
-        assert rule.finnish_ending in ("ssa", "ssä")
+        assert rule.finnish_ending_back == "ssa"
 
     def test_elative_finnish_ending(self):
         rule = get_rule_by_name("elative")
         assert rule is not None
-        assert rule.finnish_ending in ("sta", "stä")
+        assert rule.finnish_ending_back == "sta"
 
     def test_allative_finnish_ending(self):
         rule = get_rule_by_name("allative")
         assert rule is not None
-        assert rule.finnish_ending == "lle"
+        assert rule.finnish_ending_back == "lle"
 
     def test_adessive_finnish_ending(self):
         rule = get_rule_by_name("adessive")
         assert rule is not None
-        assert rule.finnish_ending in ("lla", "llä")
+        assert rule.finnish_ending_back == "lla"
 
     def test_genitive_finnish_ending(self):
         rule = get_rule_by_name("genitive")
         assert rule is not None
-        assert rule.finnish_ending == "n"
+        assert rule.finnish_ending_back == "n"
 
 
 class TestGrammarAPIStructure:

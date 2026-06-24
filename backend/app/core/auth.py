@@ -25,11 +25,12 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 
 def create_access_token(data: dict) -> str:
+    import uuid
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": expire, "jti": str(uuid.uuid4())})
     # JWT sub must be a string
-    if "sub" in to_encode:
+    if "sub" in to_encode and not isinstance(to_encode["sub"], str):
         to_encode["sub"] = str(to_encode["sub"])
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 

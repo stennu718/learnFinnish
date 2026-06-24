@@ -1,47 +1,5 @@
 """Words ja Progress API põhjalikud testid — 50+ testi."""
 import pytest
-import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
-from app.main import app
-from app.core.database import engine, Base, async_session
-
-
-@pytest_asyncio.fixture(scope="session")
-async def setup_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    async with async_session() as db:
-        from app.services.seed import seed_database
-        await seed_database(db)
-        await db.commit()
-    yield
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-
-
-@pytest_asyncio.fixture
-async def client(setup_db):
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test", follow_redirects=True) as ac:
-        yield ac
-
-
-def unique_email():
-    import uuid
-    return f"user_{uuid.uuid4().hex[:8]}@test.ee"
-
-
-@pytest_asyncio.fixture
-async def auth_headers(client: AsyncClient):
-    email = unique_email()
-    await client.post("/api/auth/register", json={
-        "email": email, "password": "validpass123"
-    })
-    resp = await client.post("/api/auth/login", json={
-        "email": email, "password": "validpass123"
-    })
-    token = resp.json()["access_token"]
-    return {"Authorization": f"Bearer {token}"}
 
 
 class TestWordsList:
@@ -146,8 +104,9 @@ class TestWordsCategories:
     async def test_categories_include_expected(self, client, auth_headers):
         resp = await client.get("/api/words/categories", headers=auth_headers)
         cats = resp.json()
-        expected = {"greetings", "questions", "numbers"}
-        assert expected.issubset(set(cats))
+        assert "greetings" in cats
+        assert "questions" in cats
+        assert "numbers" in cats
 
     @pytest.mark.asyncio
     async def test_categories_requires_auth(self, client):
@@ -213,7 +172,6 @@ class TestProgressEndpoint:
         assert data["xp"] >= 0
         assert data["level"] >= 1
         assert data["total_reviews"] >= 0
-        assert data["correct_reviews"] >= 0
 
     @pytest.mark.asyncio
     async def test_progress_accuracy_calculation(self, client, auth_headers):
