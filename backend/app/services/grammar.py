@@ -16,7 +16,6 @@ class CaseRule:
 
 
 # Estonian -> Finnish case transformation rules
-# Finnish vowel harmony: if word has back vowels (a,o,u) use back endings; if only front (ä,ö,y) use front
 CASE_RULES = [
     CaseRule("inessive", "s", "ssa", "ssä",
              "Inessive: -s → -ssa/-ssä",
@@ -27,27 +26,27 @@ CASE_RULES = [
              [{"est": "talost", "fi": "talosta"}, {"est": "metsäst", "fi": "metsästä"}]),
 
     CaseRule("allative", "le", "lle", "lle",
-             "Allative: -le → -lle (always)",
-             [{"est": "pöydäle", "fi": "pöydälle"}, {"est": "lauale", "fi": "pöydälle"}]),
+             "Allative: -le → -lle",
+             [{"est": "pöydäle", "fi": "pöydälle"}, {"est": "lauval", "fi": "pöydälle"}]),
 
     CaseRule("adessive", "l", "lla", "llä",
              "Adessive: -l → -lla/-llä",
-             [{"est": "laual", "fi": "pöydällä"}, {"est": "laual", "fi": "pöydällä"}]),
+             [{"est": "laual", "fi": "pöydällä"}, {"est": "pöydäl", "fi": "pöydällä"}]),
 
     CaseRule("ablative", "lt", "lta", "ltä",
              "Ablative: -lt → -lta/-ltä",
-             [{"est": "laua lt", "fi": "pöydältä"}]),
+             [{"est": "laualt", "fi": "pöydältä"}, {"est": "pöydält", "fi": "pöydältä"}]),
 
     CaseRule("genitive", "", "n", "n",
              "Genitive: stem → stem + -n",
-             [{"est": "maja", "fi": "talon"}, {"est": "metsä", "fi": "metsän"}]),
+             [{"est": "maja", "fi": "majan"}, {"est": "talo", "fi": "talon"}]),
 
     CaseRule("partitive", "d/t", "ta", "tä",
              "Partitive: -d/-t → -ta/-tä",
-             [{"est": "maad", "fi": "maata"}, {"est": "metsää", "fi": "metsää"}]),
+             [{"est": "maad", "fi": "maata"}, {"est": "maata", "fi": "maata"}]),
 
     CaseRule("illative", "sse", "an", "än",
-             "Illative: -sse → -an/-än/-een",
+             "Illative: -sse → -an/-än/-seen",
              [{"est": "taloon", "fi": "taloon"}, {"est": "metsään", "fi": "metsään"}]),
 
     CaseRule("translative", "ks", "ksi", "ksi",
@@ -75,37 +74,43 @@ def has_back_vowels(word: str) -> bool:
 
 def get_finnish_ending(word: str, rule: CaseRule) -> str:
     """Get the correct Finnish ending based on vowel harmony."""
-    # Check if word has only front vowels
     if not has_back_vowels(word):
         return rule.finnish_ending_front
     return rule.finnish_ending_back
 
 
 def apply_rule(estonian_word: str, rule: CaseRule) -> str:
-    """Apply a case transformation rule to an Estonian word.
-
-    This is a simplified heuristic. For production use, consider:
-    - omorfi (Finnish morphological analyzer)
-    - libvoikki (Võro/Finnish morphology)
-    - Custom ML model
-    """
+    """Apply a case transformation rule to an Estonian word."""
     # Remove Estonian ending
     if rule.estonian_ending and estonian_word.endswith(rule.estonian_ending):
         stem = estonian_word[:-len(rule.estonian_ending)]
     else:
         stem = estonian_word
 
-    # Get correct Finnish ending based on vowel harmony
     ending = get_finnish_ending(stem, rule)
 
     # Special cases
     if rule.name == "illative":
-        # Finnish illative often adds -een for back vowel words
-        if has_back_vowels(stem) and not stem.endswith("e"):
-            return stem + "een"
-        return stem + ending
+        # Finnish illative (sisseütlev):
+        # - Words ending in -e: stem + "en" (näe → näen)
+        # - Words ending in vowel: stem + stem[-1] + "n" (talo → taloon, koulu → kouluun, auto → autoon)
+        # - Words ending in consonant: stem + "seen" (talo → taloon is wrong, actually talo ends in vowel)
+        if stem.endswith("e"):
+            return stem + "en"
+        elif stem[-1] in "aeiouyäö":
+            # Vowel ending: double the last vowel + n
+            return stem + stem[-1] + "n"
+        else:
+            # Consonant ending
+            return stem + "seen"
 
     if rule.name == "genitive":
+        return stem + ending
+
+    if rule.name == "partitive":
+        # If word already ends in vowel, just add -ta/-tä
+        if stem and stem[-1] in "aeiouyäö":
+            return stem + ending
         return stem + ending
 
     return stem + ending
