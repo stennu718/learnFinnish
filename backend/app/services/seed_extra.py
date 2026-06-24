@@ -3,7 +3,7 @@ SEED_PART9 = [
   # Emotions & feelings
   {"estonian":"õnnelik","finnish":"onnellinen","et":"Ma olen õnnelik.","fi":"Olen onnellinen.","cat":"emotions","cog":0,"d":2},
   {"estonian":"kurb","finnish":"surullinen","et":"Ta on kurb.","fi":"Hän on surullinen.","cat":"emotions","cog":0,"d":2},
-  {"estonian":"vihane","finnih":"vihainen","et":"Ma olen vihane.","fi":"Olen vihainen.","cat":"emotions","cog":0,"d":2},
+  {"estonian":"vihane","finnish":"vihainen","et":"Ma olen vihane.","fi":"Olen vihainen.","cat":"emotions","cog":0,"d":2},
   {"estonian":"hirmul","finnish":"peloissaan","et":"Ma olen hirmul.","fi":"Olen peloissaan.","cat":"emotions","cog":0,"d":2},
   {"estonian":"üllatunud","finnish":"yllättynyt","et":"Ma olen üllatunud.","fi":"Olen yllättynyt.","cat":"emotions","cog":0,"d":2},
   {"estonian":"nervoosne","finnish":"hermostunut","et":"Ma olen nervoosne.","fi":"Olen hermostunut.","cat":"emotions","cog":0,"d":3},
