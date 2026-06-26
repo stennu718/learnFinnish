@@ -1,3 +1,8 @@
+[![CI](https://github.com/stennu718/learnFinnish/actions/workflows/ci.yml/badge.svg)](https://github.com/stennu718/learnFinnish/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://img.shields.io/badge/tests-271+-brightgreen.svg)]()
+
 # learnFinnish
 
 > The best Estonia-Finnish language learning app in the world. Web + Mobile.
