@@ -10,6 +10,7 @@ from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.database import get_db
+from app.core.token_blacklist import is_token_blacklisted
 from app.models import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -50,6 +51,10 @@ async def get_current_user(
         if user_id is None:
             raise credentials_exception
         user_id = int(user_id)
+        # Check if the token has been blacklisted (logout)
+        jti = payload.get("jti")
+        if jti and is_token_blacklisted(jti):
+            raise credentials_exception
     except (JWTError, ValueError):
         raise credentials_exception
 

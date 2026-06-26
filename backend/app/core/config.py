@@ -1,18 +1,25 @@
 """Application configuration."""
-import secrets
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     APP_NAME: str = "learnFinnish"
     DATABASE_URL: str = "sqlite+aiosqlite:///./learnfinnish.db"
-    SECRET_KEY: str = secrets.token_urlsafe(32)  # Auto-generated if not in .env
+    SECRET_KEY: str = Field(..., min_length=32, description="JWT signing secret — must be set in .env")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day (was 7 days)
     CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:8081"]
 
     class Config:
         env_file = ".env"
+
+    @field_validator("SECRET_KEY")
+    @classmethod
+    def validate_secret_key(cls, v: str) -> str:
+        if not v or len(v) < 32:
+            raise ValueError("SECRET_KEY must be at least 32 characters long")
+        return v
 
 
 settings = Settings()
