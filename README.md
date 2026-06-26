@@ -67,9 +67,9 @@ learnFinnish/
 
 ## Screenshots
 
-| Flashcard | Mobile | Grammar |
-|-----------|--------|---------|
-| ![Flashcard](docs/screenshot-web.png) | ![Mobile](docs/screenshot-mobile.png) | ![Grammar](docs/screenshot-grammar.png) |
+| Web | Mobile | Grammar |
+|-----|--------|---------|
+| ![Web](docs/screenshot-web.png) | ![Mobile](docs/screenshot-mobile.png) | ![Grammar](docs/screenshot-grammar.png) |
 
 ## Contributing
 
