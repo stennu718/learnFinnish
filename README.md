@@ -1,7 +1,7 @@
 [![CI](https://github.com/stennu718/learnFinnish/actions/workflows/ci.yml/badge.svg)](https://github.com/stennu718/learnFinnish/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-271+-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-271-brightgreen.svg)]()
 
 # learnFinnish
 
@@ -64,6 +64,16 @@ learnFinnish/
 - **Mobile:** React Native (Expo), TypeScript
 - **Audio:** Piper TTS + native speaker recordings
 - **Deploy:** Docker, GitHub Actions CI/CD
+
+## Screenshots
+
+| Flashcard | Mobile | Grammar |
+|-----------|--------|---------|
+| ![Flashcard](docs/screenshot-web.png) | ![Mobile](docs/screenshot-mobile.png) | ![Grammar](docs/screenshot-grammar.png) |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
 
