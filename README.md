@@ -7,6 +7,8 @@
 
 > The best Estonia-Finnish language learning app in the world. Web + Mobile.
 
+![Flashcard](docs/screenshot.png)
+
 ## Quick Start
 
 ```bash
