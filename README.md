@@ -3,6 +3,7 @@
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-271-brightgreen.svg)]()
 [![Version](https://img.shields.io/github/v/release/stennu718/learnFinnish)](https://github.com/stennu718/learnFinnish/releases)
+[![Docker](https://img.shields.io/badge/Docker-Build-2496ED.svg?logo=docker&logoColor=white)](https://github.com/stennu718/learnFinnish/pkgs/container/learnfinnish)
 
 # learnFinnish
 
