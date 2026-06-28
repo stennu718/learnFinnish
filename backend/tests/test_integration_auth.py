@@ -45,7 +45,7 @@ class TestAuthEndpoints:
             "email": "dup@test.ee",
             "password": "pass123",
         })
-        assert resp.status_code == 400
+        assert resp.status_code == 409
 
     @pytest.mark.asyncio
     async def test_register_missing_email(self, client):

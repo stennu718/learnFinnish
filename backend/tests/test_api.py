@@ -31,7 +31,7 @@ class TestAuth:
         resp = await client.post("/api/auth/register", json={
             "email": email, "password": "pass123"
         })
-        assert resp.status_code == 400
+        assert resp.status_code == 409
 
     @pytest.mark.asyncio
     async def test_login(self, client):

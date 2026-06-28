@@ -1,7 +1,7 @@
 """SRS (Spaced Repetition) API routes."""
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
@@ -25,7 +25,7 @@ class DueCardResponse(BaseModel):
 
 class ReviewRequest(BaseModel):
     card_id: int = Field(..., gt=0)
-    quality: int = Field(..., ge=0, le=5)  # 0-5 SM-2 quality
+    quality: int = Field(..., ge=0, le=5)
 
 
 class ReviewResponse(BaseModel):
@@ -37,7 +37,6 @@ class ReviewResponse(BaseModel):
 
 
 @router.get("/due", response_model=list[DueCardResponse])
-@router.get("/due/", response_model=list[DueCardResponse])
 async def get_due_cards(
     limit: int = 20,
     db: AsyncSession = Depends(get_db),
@@ -66,7 +65,6 @@ async def get_due_cards(
 
 
 @router.post("/review", response_model=ReviewResponse)
-@router.post("/review/", response_model=ReviewResponse)
 async def submit_review(
     req: ReviewRequest,
     db: AsyncSession = Depends(get_db),
@@ -79,10 +77,8 @@ async def submit_review(
     )
     card = result.scalar_one_or_none()
     if not card:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Card not found")
 
-    # SM-2 calculation
     card.ease_factor, card.interval, card.repetitions = calculate_sm2(
         quality=req.quality,
         ease_factor=card.ease_factor,
@@ -92,10 +88,8 @@ async def submit_review(
     card.last_reviewed = datetime.utcnow()
     card.next_review = datetime.utcnow() + __import__("datetime").timedelta(days=card.interval)
 
-    # XP
     xp = 10 if req.quality >= 3 else 5
 
-    # Update progress
     prog_result = await db.execute(
         select(UserProgress).where(UserProgress.user_id == user.id)
     )
@@ -103,7 +97,7 @@ async def submit_review(
     if not progress:
         progress = UserProgress(user_id=user.id)
         db.add(progress)
-        await db.flush()  # Get default values from DB
+        await db.flush()
 
     progress.total_reviews = (progress.total_reviews or 0) + 1
     if req.quality >= 3:
@@ -125,7 +119,6 @@ async def submit_review(
 
 
 @router.post("/init")
-@router.post("/init/")
 async def init_srs_cards(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),

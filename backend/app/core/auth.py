@@ -1,4 +1,5 @@
-"""Authentication utilities."""
+"""Authentication utilities — JWT access + refresh tokens with rotation."""
+import uuid
 from datetime import datetime, timedelta
 
 from fastapi import Depends, HTTPException, status
@@ -14,7 +15,7 @@ from app.core.token_blacklist import is_token_blacklisted
 from app.models import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def hash_password(password: str) -> str:
@@ -26,14 +27,30 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 
 def create_access_token(data: dict) -> str:
-    import uuid
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire, "jti": str(uuid.uuid4())})
-    # JWT sub must be a string
+    to_encode.update({"exp": expire, "jti": str(uuid.uuid4()), "type": "access"})
     if "sub" in to_encode and not isinstance(to_encode["sub"], str):
         to_encode["sub"] = str(to_encode["sub"])
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def create_refresh_token(data: dict) -> str:
+    """Create a long-lived refresh token."""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp": expire, "jti": str(uuid.uuid4()), "type": "refresh"})
+    if "sub" in to_encode and not isinstance(to_encode["sub"], str):
+        to_encode["sub"] = str(to_encode["sub"])
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def decode_token(token: str) -> dict:
+    """Decode and validate a JWT token. Returns payload or raises."""
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    if not isinstance(payload, dict):
+        raise JWTError("Invalid token payload")
+    return payload
 
 
 async def get_current_user(
@@ -46,7 +63,7 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = decode_token(token)
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception
@@ -54,6 +71,9 @@ async def get_current_user(
         # Check if the token has been blacklisted (logout)
         jti = payload.get("jti")
         if jti and is_token_blacklisted(jti):
+            raise credentials_exception
+        # Ensure this is an access token, not a refresh token
+        if payload.get("type") != "access":
             raise credentials_exception
     except (JWTError, ValueError):
         raise credentials_exception

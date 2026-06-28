@@ -60,7 +60,7 @@ class TestRegisterValidation:
         resp = await client.post("/api/auth/register", json={
             "email": email, "password": "validpass123"
         })
-        assert resp.status_code == 400
+        assert resp.status_code == 409
 
     @pytest.mark.asyncio
     async def test_register_email_normalized(self, client):

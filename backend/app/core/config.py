@@ -6,9 +6,10 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     APP_NAME: str = "learnFinnish"
     DATABASE_URL: str = "sqlite+aiosqlite:///./learnfinnish.db"
-    SECRET_KEY: str = Field(..., min_length=32, description="JWT signing secret — must be set in .env")
+    SECRET_KEY: str = Field(..., min_length=32, description="JWT signing secret")
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day (was 7 days)
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15  # Short-lived access tokens
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7    # Long-lived refresh tokens
     CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:8081"]
 
     class Config:

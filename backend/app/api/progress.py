@@ -42,8 +42,3 @@ def _build_progress_response(user: User) -> ProgressResponse:
 @router.get("/", response_model=ProgressResponse)
 async def get_progress(user: User = Depends(get_current_user)):
     return _build_progress_response(user)
-
-
-@router.get("", response_model=ProgressResponse)
-async def get_progress_no_slash(user: User = Depends(get_current_user)):
-    return _build_progress_response(user)

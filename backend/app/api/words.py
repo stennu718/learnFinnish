@@ -1,6 +1,6 @@
 """Word pairs API routes."""
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -18,18 +18,17 @@ class WordPairResponse(BaseModel):
     estonian_example: str
     finnish_example: str
     category: str
-    difficulty: int
+    difficulty: int = Field(..., ge=1, le=5)
     is_cognate: bool
     audio_url: str
 
 
 @router.get("/", response_model=list[WordPairResponse])
-@router.get("", response_model=list[WordPairResponse])
 async def list_words(
-    category: str | None = Query(None),
+    category: str | None = Query(None, max_length=100),
     cognates_only: bool = Query(False),
-    limit: int = Query(50, le=200),
-    offset: int = Query(0),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
@@ -59,7 +58,6 @@ async def list_words(
 
 
 @router.get("/categories")
-@router.get("/categories/")
 async def list_categories(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),

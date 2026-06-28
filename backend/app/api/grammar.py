@@ -1,12 +1,12 @@
 """Grammar API routes — Estonian-Finnish case transformation exercises."""
-from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 
 from app.core.auth import get_current_user
 from app.models import User
 from app.services.grammar import (
     get_all_rules, get_rule_by_name, generate_exercise,
-    generate_all_exercises, apply_rule, CaseRule
+    generate_all_exercises, apply_rule,
 )
 
 router = APIRouter()
@@ -30,8 +30,8 @@ class ExerciseResponse(BaseModel):
 
 
 class ApplyRuleRequest(BaseModel):
-    word: str
-    rule_name: str
+    word: str = Field(..., min_length=1, max_length=200)
+    rule_name: str = Field(..., min_length=1, max_length=100)
 
 
 class ApplyRuleResponse(BaseModel):
@@ -43,7 +43,6 @@ class ApplyRuleResponse(BaseModel):
 
 @router.get("/rules", response_model=list[CaseRuleResponse])
 async def list_rules(user: User = Depends(get_current_user)):
-    """List all case transformation rules."""
     rules = get_all_rules()
     return [CaseRuleResponse(
         name=r.name,
@@ -56,10 +55,8 @@ async def list_rules(user: User = Depends(get_current_user)):
 
 @router.get("/rules/{rule_name}", response_model=CaseRuleResponse)
 async def get_rule(rule_name: str, user: User = Depends(get_current_user)):
-    """Get a specific case rule."""
     rule = get_rule_by_name(rule_name)
     if not rule:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Rule not found")
     return CaseRuleResponse(
         name=rule.name,
@@ -72,17 +69,14 @@ async def get_rule(rule_name: str, user: User = Depends(get_current_user)):
 
 @router.get("/exercises", response_model=list[ExerciseResponse])
 async def list_exercises(user: User = Depends(get_current_user)):
-    """Generate all grammar exercises."""
     exercises = generate_all_exercises()
     return [ExerciseResponse(**e) for e in exercises]
 
 
 @router.get("/exercises/{rule_name}", response_model=ExerciseResponse)
 async def get_exercise(rule_name: str, user: User = Depends(get_current_user)):
-    """Generate a grammar exercise for a specific rule."""
     rule = get_rule_by_name(rule_name)
     if not rule:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Rule not found")
     exercise = generate_exercise(rule)
     return ExerciseResponse(**exercise)
@@ -90,10 +84,8 @@ async def get_exercise(rule_name: str, user: User = Depends(get_current_user)):
 
 @router.post("/apply", response_model=ApplyRuleResponse)
 async def apply_case_rule(req: ApplyRuleRequest, user: User = Depends(get_current_user)):
-    """Apply a case transformation rule to a word."""
     rule = get_rule_by_name(req.rule_name)
     if not rule:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Rule not found")
     transformed = apply_rule(req.word, rule)
     return ApplyRuleResponse(
