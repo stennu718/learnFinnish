@@ -1,83 +1,36 @@
-[![CI](https://github.com/stennu718/learnFinnish/actions/workflows/ci.yml/badge.svg)](https://github.com/stennu718/learnFinnish/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-271-brightgreen.svg)]()
-[![Version](https://img.shields.io/github/v/release/stennu718/learnFinnish)](https://github.com/stennu718/learnFinnish/releases)
-[![Docker](https://img.shields.io/badge/Docker-Build-2496ED.svg?logo=docker&logoColor=white)](https://github.com/stennu718/learnFinnish/pkgs/container/learnfinnish)
-
 # learnFinnish
 
-> The best Estonia-Finnish language learning app in the world. Web + Mobile.
+Learn Finnish from Estonian — fast, free, and effective.
+526 words, grammar explanations, and smart spaced repetition that helps you remember.
 
-![Web](docs/screenshot-web.png)
+**For**: Estonian speakers who want to learn Finnish for work, travel, or fun.
 
 ## Quick Start
 
 ```bash
-# Clone
+# Clone and run
 git clone https://github.com/stennu718/learnFinnish.git
-cd learnFinnish
-
-# Backend
-cd backend
-python -m venv venv && source venv/bin/activate
+cd learnFinnish/backend
 pip install -r requirements.txt
-uvicorn app.main:app --reload
-
-# Frontend (new terminal)
-cd frontend
-npm install
-npm run dev
-
-# Mobile (new terminal)
-cd mobile
-npx expo start
+python app/main.py
 ```
 
-## Project Structure
+Then open your browser and start learning.
 
-```
-learnFinnish/
-├── backend/          # FastAPI + SQLite/PostgreSQL
-│   ├── app/
-│   │   ├── api/      # REST endpoints
-│   │   ├── models/   # SQLAlchemy models
-│   │   ├── services/ # Business logic
-│   │   └── core/     # Config, auth, DB
-│   └── tests/        # pytest
-├── frontend/         # Next.js 15 + Tailwind
-│   └── src/
-│       ├── app/      # App router pages
-│       ├── components/
-│       ├── hooks/
-│       └── lib/
-├── mobile/           # React Native (Expo)
-│   └── src/
-│       ├── screens/
-│       ├── components/
-│       ├── navigation/
-│       └── services/
-├── docs/             # Strategy & architecture
-└── .github/          # CI/CD workflows
-```
+## What you can do
 
-## Tech Stack
-
-- **Backend:** FastAPI, SQLAlchemy, SQLite/PostgreSQL, JWT auth
-- **Frontend:** Next.js 15, Tailwind CSS, TypeScript
-- **Mobile:** React Native (Expo), TypeScript
-- **Audio:** Piper TTS + native speaker recordings
-- **Deploy:** Docker, GitHub Actions CI/CD
+- **Browse 526 words** — each with examples, etymology, and audio pronunciation
+- **Practice with quizzes** — multiple choice, text input, and reaction tests to keep you sharp
+- **Learn grammar** — clear explanations tailored for Estonian speakers, with interactive exercises
+- **Remember with SRS** — spaced repetition figures out what you're about to forget and reviews it before you do
+- **Track your progress** — see which words you know, which need work, and how far you've come
+- **Use it anywhere** — works on your phone and your computer, so you can study on the bus or at your desk
 
 ## Screenshots
 
 | Web | Mobile | Grammar |
 |-----|--------|---------|
 | ![Web](docs/screenshot-web.png) | ![Mobile](docs/screenshot-mobile.png) | ![Grammar](docs/screenshot-grammar.png) |
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
 
